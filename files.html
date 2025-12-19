@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="files-container">
+    <div class="files-header">
+        <h2><i class="fas fa-folder-open"></i> Shared Files</h2>
+        <form method="POST" enctype="multipart/form-data" class="upload-form">
+            <input type="file" name="file" id="file-upload" class="file-input" required>
+            <label for="file-upload" class="btn-primary" style="display:inline-block; cursor:pointer;">
+                <i class="fas fa-cloud-upload-alt"></i> Choose File
+            </label>
+            <span id="file-name" style="margin: 0 10px; color:#aaa;">No file chosen</span>
+            <button type="submit" class="btn-primary">Upload</button>
+        </form>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for message in messages %}
+    <div class="flash-error" style="background: rgba(76, 175, 80, 0.2); color: #4caf50;">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <div class="files-list">
+        {% for file in files %}
+        <div class="file-card">
+            <div class="file-icon">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <div class="file-info">
+                <h4>{{ file.original_name }}</h4>
+                <p>
+                    Uploaded by {{ file.user.username }} <br>
+                    {{ file.upload_date.strftime('%Y-%m-%d') }} • {{ (file.size / 1024)|round(1) }} KB
+                </p>
+            </div>
+            <div class="file-actions">
+                <a href="{{ url_for('download_file', file_id=file.id) }}" class="btn-icon"><i
+                        class="fas fa-download"></i></a>
+                {% if current_user.is_admin or current_user.id == file.user_id %}
+                <a href="{{ url_for('delete_file', file_id=file.id) }}" class="btn-icon delete"
+                    onclick="return confirm('Delete this file?')"><i class="fas fa-trash"></i></a>
+                {% endif %}
+            </div>
+        </div>
+        {% else %}
+        <p class="no-files">No files shared yet.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    document.getElementById('file-upload').addEventListener('change', function () {
+        document.getElementById('file-name').textContent = this.files[0] ? this.files[0].name : "No file chosen";
+    });
+</script>
+{% endblock %}

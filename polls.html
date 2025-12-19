@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="files-container">
+    <div class="forum-header">
+        <h2><i class="fas fa-poll"></i> Polls & Decisions</h2>
+        <button onclick="document.getElementById('poll-modal').style.display='block';" class="btn-primary"
+            style="width: auto;">Create Poll</button>
+    </div>
+
+    <!-- Study Timer Component -->
+    <div class="auth-box"
+        style="width: 100%; margin-bottom: 30px; text-align: center; display: flex; align-items: center; justify-content: space-between;">
+        <div style="text-align: left;">
+            <h3><i class="fas fa-stopwatch"></i> Study Timer</h3>
+            <p style="color: #aaa; font-size: 0.9rem;">Focus for 25 minutes, take a 5 minute break.</p>
+        </div>
+        <div style="text-align: right;">
+            <div id="timer-display"
+                style="font-size: 2.5rem; font-weight: bold; font-family: monospace; color: var(--accent);">25:00</div>
+            <div style="margin-top: 10px;">
+                <button id="start-timer" class="btn-primary" style="width: auto; padding: 5px 15px;">Start</button>
+                <button id="reset-timer" class="btn-primary"
+                    style="width: auto; padding: 5px 15px; background: #444;">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Polls List -->
+    <div class="thread-list">
+        {% for item in polls %}
+        <div class="thread-item" style="padding: 20px;">
+            <div style="display: flex; justify-content: space-between;">
+                <h3>{{ item.poll.question }}</h3>
+                <span class="status-indicator">Total Votes: {{ item.total_votes }}</span>
+            </div>
+
+            <div style="margin-top: 15px;">
+                {% for option in item.options %}
+                <div style="margin-bottom: 10px;">
+                    {% set percent = 0 %}
+                    {% if item.total_votes > 0 %}
+                    {% set percent = (item.results[loop.index0] / item.total_votes * 100)|round %}
+                    {% endif %}
+
+                    <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 5px;">
+                        <span>{{ option }} {% if item.user_voted_index == loop.index0 %}<i class="fas fa-check-circle"
+                                style="color: var(--accent);"></i>{% endif %}</span>
+                        <span>{{ percent }}%</span>
+                    </div>
+
+                    <div style="background: #333; height: 8px; border-radius: 4px; cursor: pointer; position: relative; overflow: hidden;"
+                        onclick="location.href='{{ url_for('vote_poll', poll_id=item.poll.id, option_index=loop.index0) }}';">
+                        <div style=" background: var(--accent); height: 100%; width: {{ percent }}%;"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        <p class="no-files">No active polls.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Create Poll Modal -->
+    <div id="poll-modal" class="modal"
+        style="display:none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);">
+        <div class="modal-content"
+            style="background: #252525; margin: 10% auto; padding: 30px; width: 400px; border-radius: 12px; border: 1px solid #444;">
+            <span class="close" onclick="document.getElementById('poll-modal').style.display='none';"
+                style="float:right; cursor:pointer; font-size: 24px;">&times;</span>
+            <h3 style="margin-bottom: 20px;">Create Poll</h3>
+            <form method="POST">
+                <div class="form-group">
+                    <label>Question</label>
+                    <input type="text" name="question" required>
+                </div>
+                <div class="form-group">
+                    <label>Options</label>
+                    <input type="text" name="option" placeholder="Option 1" required style="margin-bottom: 5px;">
+                    <input type="text" name="option" placeholder="Option 2" required style="margin-bottom: 5px;">
+                    <input type="text" name="option" placeholder="Option 3" style="margin-bottom: 5px;">
+                    <input type="text" name="option" placeholder="Option 4">
+                </div>
+                <button type="submit" class="btn-primary">Create</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Simple Timer Logic
+    let timeLeft = 25 * 60;
+    let timerId = null;
+    const display = document.getElementById('timer-display');
+
+    function updateDisplay() {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        display.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    document.getElementById('start-timer').addEventListener('click', () => {
+        if (timerId) clearInterval(timerId);
+        timerId = setInterval(() => {
+            if (timeLeft > 0) {
+                timeLeft--;
+                updateDisplay();
+                // Optional: broadcast status via socket if desired
+            } else {
+                clearInterval(timerId);
+                alert("Time's up!");
+            }
+        }, 1000);
+    });
+
+    document.getElementById('reset-timer').addEventListener('click', () => {
+        if (timerId) clearInterval(timerId);
+        timeLeft = 25 * 60;
+        updateDisplay();
+    });
+</script>
+{% endblock %}

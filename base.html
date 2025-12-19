@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrivateHub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <nav class="sidebar">
+            <div class="logo">
+                <i class="fas fa-cube"></i> <span>PrivateHub</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('index') }}"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="{{ url_for('chat') }}"><i class="fas fa-comments"></i> Chat</a></li>
+                <li><a href="#"><i class="fas fa-users"></i> Forum</a></li>
+                <li><a href="{{ url_for('files') }}"><i class="fas fa-folder"></i> Files</a></li>
+                <li><a href="{{ url_for('calendar') }}"><i class="fas fa-calendar"></i> Calendar</a></li>
+                <li><a href="{{ url_for('habits') }}"><i class="fas fa-check-square"></i> Tracker</a></li>
+                <li><a href="{{ url_for('polls') }}"><i class="fas fa-poll"></i> Polls</a></li>
+            </ul>
+        </nav>
+        <main class="content">
+            {% block content %}
+            <div class="welcome-screen">
+                <h1>Welcome to PrivateHub</h1>
+                <p>Select a module to get started.</p>
+            </div>
+            {% endblock %}
+        </main>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>

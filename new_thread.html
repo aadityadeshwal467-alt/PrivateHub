@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="auth-container"> <!-- Reusing container for centering -->
+    <div class="auth-box" style="width: 600px;">
+        <h2>Create New Thread</h2>
+        <form method="POST">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+            <div class="form-group">
+                <label for="content">Content (Markdown supported)</label>
+                <textarea id="content" name="content" rows="8" required
+                    style="width: 100%; border-radius: 6px; padding: 10px; background: #333; color: #fff; border: 1px solid #444;"></textarea>
+            </div>
+            <button type="submit" class="btn-primary">Create Thread</button>
+            <a href="{{ url_for('forum_category', category_id=category.id) }}"
+                style="display: block; text-align: center; margin-top: 10px; color: #aaa;">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

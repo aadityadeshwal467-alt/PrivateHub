@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="forum-container">
+    <div class="forum-header">
+        <h2>{{ category.name }}</h2>
+        <a href="{{ url_for('new_thread', category_id=category.id) }}" class="btn-primary"
+            style="width: auto; padding: 10px 20px;">
+            <i class="fas fa-plus"></i> New Thread
+        </a>
+    </div>
+
+    <div class="thread-list">
+        {% for thread in category.threads %}
+        <div class="thread-item">
+            <a href="{{ url_for('view_thread', thread_id=thread.id) }}" class="thread-link">
+                <h4>{{ thread.title }}</h4>
+                <div class="thread-meta">
+                    <span><i class="fas fa-user"></i> {{ thread.user.username }}</span>
+                    <span><i class="fas fa-clock"></i> {{ thread.timestamp.strftime('%Y-%m-%d %H:%M') }}</span>
+                    <span><i class="fas fa-comment"></i> {{ thread.posts|length }}</span>
+                </div>
+            </a>
+        </div>
+        {% else %}
+        <p class="no-threads">No threads yet. Be the first to start one!</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

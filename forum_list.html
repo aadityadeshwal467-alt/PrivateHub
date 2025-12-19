@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="forum-container">
+    <h2><i class="fas fa-users"></i> Discussion Forum</h2>
+    <div class="category-grid">
+        {% for category in categories %}
+        <a href="{{ url_for('forum_category', category_id=category.id) }}" class="category-card">
+            <div class="category-icon">
+                {% if 'Coding' in category.name %}<i class="fas fa-code"></i>
+                {% elif 'Problem' in category.name %}<i class="fas fa-brain"></i>
+                {% else %}<i class="fas fa-comments"></i>{% endif %}
+            </div>
+            <h3>{{ category.name }}</h3>
+            <p>{{ category.threads|length }} Threads</p>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
